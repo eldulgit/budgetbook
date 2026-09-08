@@ -29,7 +29,7 @@ public class CategoryService {
     }
 
     public Category findById(Long id) {
-        return categoryRepository.findById(id).orElse(null);
+        return categoryRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다."));
     }
 
     public boolean deleteCategory(Long id) {
@@ -38,6 +38,19 @@ public class CategoryService {
         }
         categoryRepository.deleteById(id);
         return true;
+    }
+
+    public void updateCategory(Long id, String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("카테고리 이름을 입력해주세요.");
+        }
+        Category category = findById(id);
+        if (!category.getName().equals(name)
+                && categoryRepository.existsByName(name)) {
+            throw new IllegalArgumentException("이미 존재하는 카테고리입니다.");
+        }
+        category.setName(name);
+        categoryRepository.save(category);
     }
 }
 

@@ -45,4 +45,18 @@ public class CategoryController {
         }
         return "redirect:/categories";
     }
+
+    @GetMapping("/categories/edit")
+    public String editCategory(Long id, Model model) {
+        Category category = categoryService.findById(id);
+        model.addAttribute("category", category);
+        return "edit-category";
+    }
+
+    @PostMapping("/categories/update")
+    public String updateCategory(@ModelAttribute Category category, RedirectAttributes redirectAttributes) {
+        categoryService.updateCategory(category.getId(), category.getName());
+        redirectAttributes.addFlashAttribute("message", "카테고리가 수정되었습니다");
+        return "redirect:/categories";
+    }
 }

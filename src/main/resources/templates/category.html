@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -43,7 +43,7 @@
                 <h1 class="h2">카테고리 관리</h1>
             </div>
 
-            <p th:if="${message}" th:text="${message}" class="alert alert-danger"></p>
+            <div th:if="${message}" th:text="${message}" class="alert alert-danger"></div>
 
             <div class="row g-4">
                 <!-- Add Category Form Card -->
@@ -86,10 +86,20 @@
                                         <tr th:each="category : ${categories}">
                                             <td class="ps-4 fw-medium" th:text="${category.name}">name</td>
                                             <td class="text-end pe-4">
-                                                <form action="/categories/delete" method="post" class="d-inline">
+                                                <form action="/categories/edit" method="get" class="d-inline">
+                                                    <input type="hidden" name="id" th:value="${category.id}">
+                                                    <button type="submit" class="btn btn-outline-primary btn-sm">수정</button>
+                                                </form>
+                                                <form action="/categories/delete" method="post" class="d-inline"
+                                                      onsubmit="return confirm('이 카테고리를 삭제하시겠습니까?');">
                                                     <input type="hidden" name="id" th:value="${category.id}">
                                                     <button type="submit" class="btn btn-outline-danger btn-sm">삭제</button>
                                                 </form>
+                                            </td>
+                                        </tr>
+                                        <tr th:if="${#lists.isEmpty(categories)}">
+                                            <td colspan="2" class="text-center text-muted py-5">
+                                                등록된 카테고리가 없습니다.
                                             </td>
                                         </tr>
                                     </tbody>
