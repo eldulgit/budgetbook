@@ -1,0 +1,92 @@
+.table .in {
+    color: blue;
+}
+
+.table .out {
+    color: red;
+}
+.table-area {
+    width: 100%;
+}
+.input-form {
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+    width: 100%;
+    max-width: 300px;
+}
+
+.record-filter-form {
+    display: grid;
+    grid-template-columns:
+        minmax(120px, 0.9fr)
+        minmax(120px, 0.9fr)
+        minmax(120px, 0.8fr)
+        minmax(130px, 1fr)
+        minmax(150px, 1.2fr)
+        minmax(84px, 100px);
+    gap: 12px;
+    align-items: end;
+}
+
+.record-filter-form .form-label {
+    min-height: 20px;
+    white-space: nowrap;
+}
+
+.record-filter-action {
+    min-width: 0;
+}
+.summary-box {
+    width: 100%;
+    height: 100%;
+}
+
+.chart-area {
+    position: relative;
+    height: 320px;
+}
+
+.chart-container {
+    position: relative;
+    height: 320px;
+}
+
+.category-chart-container {
+    max-width: 520px;
+    margin: 0 auto;
+}
+.record-action {
+    white-space: nowrap;
+}
+
+.record-action > div {
+    display: flex;
+    gap: 5px;
+}
+
+.category-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    min-width: 0;
+}
+
+.category-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 991.98px) {
+    .record-filter-form {
+        grid-template-columns: repeat(3, minmax(140px, 1fr));
+    }
+}
+
+@media (max-width: 575.98px) {
+    .record-filter-form {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,13 @@
+가계부 db설계
+
+categories
+- id BIGINT IDENTITY(1,1) PRIMARY KEY
+- name NVARCHAR(50) NOT NULL UNIQUE
+
+records
+- id BIGINT IDENTITY(1,1) PRIMARY KEY
+- date DATE NOT NULL
+- type NVARCHAR(20) NOT NULL
+- category_id BIGINT NOT NULL
+- title NVARCHAR(100) NOT NULL
+- amount INT NOT NULL

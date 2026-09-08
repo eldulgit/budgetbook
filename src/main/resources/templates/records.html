@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/css/style.css" />
+    <title>가계부</title>
+</head>
+<body class="bg-light">
+<div class="container-fluid">
+    <div class="row">
+        <!-- Mobile Navbar Header -->
+        <header class="navbar navbar-dark bg-dark d-md-none px-3 py-2">
+            <a class="navbar-brand fs-5" href="#"><i class="bi bi-wallet2 me-2"></i>가계부 관리</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </header>
+
+        <!-- Sidebar Navigation -->
+        <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-dark text-white sidebar collapse min-vh-100 p-3">
+            <div class="position-sticky pt-3">
+                <h4 class="text-white px-3 mb-4 d-none d-md-block"><i class="bi bi-wallet2 me-2"></i>가계부 관리</h4>
+                <ul class="nav flex-column gap-2">
+                    <li class="nav-item">
+                        <a href="/records" class="nav-link text-white active bg-primary rounded"><i class="bi bi-list-ul me-2"></i>내역</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/categories" class="nav-link text-white"><i class="bi bi-tags me-2"></i>카테고리</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/summary" class="nav-link text-white"><i class="bi bi-bar-chart-line me-2"></i>통계</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">가계부 내역</h1>
+                <a href="/records/new" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i>새 내역 추가</a>
+            </div>
+
+            <!-- Search / Filter Form Area -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body">
+                    <form action="/records" method="get" class="record-filter-form">
+                        <div>
+                            <label class="form-label small text-muted">시작일</label>
+                            <input type="date" name="startDate" class="form-control form-control-sm" th:value="${startDate}"/>
+                        </div>
+                        <div>
+                            <label class="form-label small text-muted">종료일</label>
+                            <input type="date" name="endDate" class="form-control form-control-sm" th:value="${endDate}"/>
+                        </div>
+                        <div>
+                            <label class="form-label small text-muted">수입·지출 구분</label>
+                            <select name="type" class="form-select form-select-sm">
+                                <option value="">전체</option>
+                                <option value="INCOME" th:selected="${type != null and type.name() == 'INCOME'}">수입</option>
+                                <option value="EXPENSE" th:selected="${type != null and type.name() == 'EXPENSE'}">지출</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label small text-muted">카테고리 선택</label>
+                            <select name="categoryId" class="form-select form-select-sm">
+                                <option value="">전체 카테고리</option>
+                                <option th:each="category : ${categories}"
+                                        th:value="${category.id}"
+                                        th:text="${category.name}"
+                                        th:selected="${categoryId != null and category.id == categoryId}">
+                                    카테고리명
+                                </option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label small text-muted">내역명</label>
+                            <input type="text" name="keyword" class="form-control form-control-sm" th:value="${keyword}" placeholder="내역명 검색"/>
+                        </div>
+                        <div class="record-filter-action">
+                            <button type="submit" class="btn btn-primary btn-sm w-100"><i class="bi bi-search me-1"></i>검색</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-0">
+                    <div class="table-area table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-4" style="width: 18%;">날짜</th>
+                                    <th style="width: 12%;">구분</th>
+                                    <th style="width: 18%;">카테고리</th>
+                                    <th style="width: 22%;">내역명</th>
+                                    <th style="width: 15%;">금액</th>
+                                    <th class="text-center" style="width: 15%;">관리</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="record : ${records}">
+                                    <td class="ps-4" th:text="${record.date}">날짜</td>
+                                    <td>
+                                        <span th:class="${record.type.name() == 'INCOME'} ? 'badge bg-success-subtle text-success px-2 py-1' : 'badge bg-danger-subtle text-danger px-2 py-1'"
+                                              th:text="${record.type.name() == 'INCOME'} ? '수입' : '지출'">구분</span>
+                                    </td>
+                                    <td th:text="${record.category.name}">카테고리</td>
+                                    <td class="fw-medium" th:text="${record.title}">내역명</td>
+                                    <td th:class="${record.type.name() == 'EXPENSE'} ? 'text-danger fw-semibold out' : 'text-success fw-semibold in'"
+                                        th:text="${record.type.name() == 'EXPENSE' ? '-' +
+                                        #numbers.formatInteger(record.amount, 0, 'COMMA') :
+                                        #numbers.formatInteger(record.amount, 0, 'COMMA')}">
+                                        금액
+                                    </td>
+                                    <td class="text-center record-action">
+                                        <div class="d-flex justify-content-center gap-1">
+                                            <form action="/records/edit" method="get" class="d-inline">
+                                                <input type="hidden" name="id" th:value="${record.id}">
+                                                <button class="btn btn-outline-primary btn-sm">수정</button>
+                                            </form>
+                                            <form action="/records/delete" method="post" class="d-inline">
+                                                <input type="hidden" name="id" th:value="${record.id}">
+                                                <button type="submit" class="btn btn-outline-danger btn-sm">삭제</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <nav class="p-3" aria-label="내역 페이지" th:if="${recordPage.totalPages > 1}">
+                        <ul class="pagination pagination-sm justify-content-center mb-0">
+                            <li class="page-item" th:classappend="${recordPage.first} ? 'disabled'">
+                                <a class="page-link"
+                                   th:href="@{/records(page=${recordPage.number - 1}, size=${recordPage.size}, startDate=${startDate}, endDate=${endDate}, type=${type}, categoryId=${categoryId}, keyword=${keyword})}">
+                                    이전
+                                </a>
+                            </li>
+                            <li class="page-item"
+                                th:each="pageNumber : ${#numbers.sequence(0, recordPage.totalPages - 1)}"
+                                th:classappend="${pageNumber == recordPage.number} ? 'active'">
+                                <a class="page-link"
+                                   th:href="@{/records(page=${pageNumber}, size=${recordPage.size}, startDate=${startDate}, endDate=${endDate}, type=${type}, categoryId=${categoryId}, keyword=${keyword})}"
+                                   th:text="${pageNumber + 1}">
+                                    1
+                                </a>
+                            </li>
+                            <li class="page-item" th:classappend="${recordPage.last} ? 'disabled'">
+                                <a class="page-link"
+                                   th:href="@{/records(page=${recordPage.number + 1}, size=${recordPage.size}, startDate=${startDate}, endDate=${endDate}, type=${type}, categoryId=${categoryId}, keyword=${keyword})}">
+                                    다음
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
